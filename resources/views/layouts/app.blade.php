@@ -31,6 +31,10 @@
             <main>
                 {{ $slot }}
             </main>
+
+            <footer class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
+                <p>&copy; {{ now()->year }} <a href="https://jasperjakobs.nl">jasperjakobs.nl</a> - Alle rechten voorbehouden.</p>
+            </footer>
         </div>
     </body>
 </html>
