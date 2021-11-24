@@ -18,7 +18,7 @@ class CreateSoftbricksTable extends Migration
             $table->integer('user')->unique();
             $table->string('email');
             $table->string('password');
-            $table->string('token');
+            $table->string('token')->nullable();
         });
     }
 
