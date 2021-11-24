@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,12 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/', [Controller::class, 'home'])->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/settings', function () {
-    return view('settings');
-})->middleware(['auth', 'verified'])->name('settings');
+Route::get('/settings', [Controller::class, 'settings'])->middleware(['auth', 'verified'])->name('settings');
+
+Route::post('/settings/softbrick', [Controller::class, 'updateSoftbrick'])->middleware(['auth', 'verified'])->name("post:softbrick");
 
 require __DIR__.'/auth.php';

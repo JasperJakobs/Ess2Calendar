@@ -5,6 +5,7 @@
         </h2>
     </x-slot>
 
+    @if(!isset($softbrick))
     <div class="text-center pt-12 lg:px-4">
         <a href="{{ route('settings') }}">
             <div class="p-2 bg-green-800 items-center text-green-100 leading-none lg:rounded-full flex lg:inline-flex" role="alert">
@@ -14,6 +15,7 @@
             </div>
         </a>
     </div>
+    @endisset
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col sm:justify-center items-center">
