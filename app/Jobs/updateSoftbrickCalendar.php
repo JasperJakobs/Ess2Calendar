@@ -59,16 +59,26 @@ class updateSoftbrickCalendar implements ShouldQueue
             $sbcontroller = new SoftbrickController;
             $sbcontroller->authSoftbrick($this->softbrick);
         } else if ($response["success"] == "true") {
+
             $calendar = Calendar::create('Softbrick van ' . $this->softbrick->email)
                 ->name('Softbrick van ' . $this->softbrick->email)
                 ->description('Softbrick werkrooster via https://e2c.jasperjakobs.nl/');
             $data = $response['data'];
+
             foreach ($data as $item) {
                 if ($item['naam'] == 'plan') {
+
+                    $address = "0036: BCC Arnhem";
+
+                    if ($item['locatie'] != null) {
+                        $locations = explode(',', $item['locatie']);
+                        $address = $locations[0];
+                    }
+
                     $calendar->event(\Spatie\IcalendarGenerator\Components\Event::create()
                         ->name('Werken')
                         ->description('Beheerd door e2c.jasperjakobs.nl')
-                        ->address("BCC")
+                        ->address($address)
                         ->startsAt(new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam')))
                         ->endsAt(new \DateTime($item['datum'] . $item['tot'], new DateTimeZone('Europe/Amsterdam'))));
                 }
