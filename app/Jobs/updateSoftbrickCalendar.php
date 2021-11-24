@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Http\Controllers\SoftbrickController;
 use App\Models\Softbrick;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -49,10 +50,8 @@ class updateSoftbrickCalendar implements ShouldQueue
         ])->throw()->json();
 
         if ($response["success"] == "false") {
-            $this->softbrick->update([
-                'password' => null,
-            ]);
-//            TODO: Mail voor error.
+            $sbcontroller = new SoftbrickController;
+            $sbcontroller->authSoftbrick($this->softbrick);
         } else if ($response["success"] == "true") {
 
         }

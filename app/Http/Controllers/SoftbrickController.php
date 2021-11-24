@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Jobs\updateCalendar;
 use App\Jobs\updateSoftbrickCalendar;
 use App\Models\Softbrick;
+use App\Notifications\softbrickError;
 use App\Providers\RouteServiceProvider;
+use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -73,6 +75,9 @@ class SoftbrickController extends Controller
             $softbrick->update([
                 'password' => null
             ]);
+            $user = Auth::user();
+            $user->notify(new softbrickError());
+
             return "error:" . $response['message'];
         } else if ($response["success"] == "true") {
             $token = $response['data']['0']['token'];
