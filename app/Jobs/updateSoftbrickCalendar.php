@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Http\Controllers\SoftbrickController;
 use App\Models\Softbrick;
 use DateTime;
+use DateTimeZone;
 use Illuminate\Bus\Queueable;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -65,9 +66,11 @@ class updateSoftbrickCalendar implements ShouldQueue
             foreach ($data as $item) {
                 if ($item['naam'] == 'plan') {
                     $calendar->event(\Spatie\IcalendarGenerator\Components\Event::create()
-                        ->name('Ingeroosterd @ BCC')
-                        ->startsAt(new DateTime($item['datum'] . $item['van']))
-                        ->endsAt(new \DateTime($item['datum'] . $item['tot'])));
+                        ->name('Werken')
+                        ->description('Beheerd door e2c.jasperjakobs.nl')
+                        ->address("BCC")
+                        ->startsAt(new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam')))
+                        ->endsAt(new \DateTime($item['datum'] . $item['tot'], new DateTimeZone('Europe/Amsterdam'))));
                 }
             }
 
