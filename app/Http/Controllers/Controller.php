@@ -10,6 +10,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class Controller extends BaseController
 {
@@ -56,7 +57,7 @@ class Controller extends BaseController
         $softbrick = Softbrick::where('user', '=', Auth::id())->first();
 
         if (!Softbrick::where('user', '=', Auth::id())->exists()) {
-             Softbrick::create([
+             $softbrick = Softbrick::create([
                 'user' => Auth::id(),
                 'email' => $request->get('email'),
                 'password' => $request->get('password')
@@ -68,7 +69,23 @@ class Controller extends BaseController
             ]);
         }
 
-      return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:success', '');
+        $response = Http::acceptJson()->withHeaders([
+            'content-type' => 'application/json'
+        ])->post('https://bcc.softbrick.com:3000/logon?version=4', [
+            'user' => $softbrick->email,
+            'password' => $softbrick->password,
+            'device' => '',
+            'language' => 'nl',
+        ])->throw()->json();
+
+//        dd($response['data']['0']['token']);
+
+        if ($response["success"] == "false") {
+            return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:error', $response['message']);
+        }
+
+//        dd($response);
+        return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:success', '');
     }
 
 }
