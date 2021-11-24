@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\SoftbrickController;
 use App\Jobs\updateCalendar;
+use App\Jobs\updateSoftbrickCalendar;
 use App\Models\Softbrick;
 use Illuminate\Console\Command;
 
@@ -42,8 +43,8 @@ class UpdateCalendars extends Command
     {
         $softbricks = Softbrick::all();
         foreach ($softbricks as $softbrick) {
-
             $this->info("Updating " . $softbrick->email);
+            updateSoftbrickCalendar::dispatch($softbrick);
         }
 
         return Command::SUCCESS;

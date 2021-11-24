@@ -11,6 +11,7 @@ use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use PhpParser\Node\Scalar\String_;
 
 class SoftbrickController extends Controller
@@ -34,7 +35,8 @@ class SoftbrickController extends Controller
             $softbrick = Softbrick::create([
                 'user' => Auth::id(),
                 'email' => $request->get('email'),
-                'password' => $request->get('password')
+                'password' => $request->get('password'),
+                'uuid' => Str::uuid()
             ]);
         } else {
             $softbrick->update([

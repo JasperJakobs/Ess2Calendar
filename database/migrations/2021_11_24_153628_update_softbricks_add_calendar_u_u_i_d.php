@@ -14,7 +14,7 @@ class UpdateSoftbricksAddCalendarUUID extends Migration
     public function up()
     {
         Schema::table('softbricks', function (Blueprint $table) {
-            $table->string("uuid")->nullable();
+            $table->string("uuid")->nullable()->unique();
         });
     }
 

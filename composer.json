@@ -11,7 +11,8 @@
         "laravel/framework": "^8.65",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "spatie/calendar-links": "^1.6"
+        "spatie/calendar-links": "^1.6",
+        "spatie/icalendar-generator": "^2.3"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
