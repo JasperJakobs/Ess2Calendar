@@ -21,7 +21,7 @@
                                             Succes!
                                         </div>
                                         <div class="border border-t-0 border-green-400 rounded-b bg-green-100 px-4 py-3 text-green-700">
-                                            <p>Je gegevens zijn opgeslagen. Je kan je nu abonneren op je calender!</p>
+                                            <p>{{ session('softbrick:success') }}</p>
                                         </div>
                                     </div>
                                 @endif

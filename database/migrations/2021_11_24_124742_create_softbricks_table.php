@@ -16,8 +16,8 @@ class CreateSoftbricksTable extends Migration
         Schema::create('softbricks', function (Blueprint $table) {
             $table->id();
             $table->integer('user')->unique();
-            $table->string('email');
-            $table->string('password');
+            $table->string('email')->nullable();
+            $table->string('password')->nullable();
             $table->string('token')->nullable();
         });
     }

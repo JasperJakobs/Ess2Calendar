@@ -69,6 +69,8 @@ class Controller extends BaseController
             ]);
         }
 
+        if ($softbrick->password == null) return redirect(RouteServiceProvider::SETTINGS);
+
         $response = Http::acceptJson()->withHeaders([
             'content-type' => 'application/json'
         ])->post('https://bcc.softbrick.com:3000/logon?version=4', [
@@ -78,14 +80,19 @@ class Controller extends BaseController
             'language' => 'nl',
         ])->throw()->json();
 
-//        dd($response['data']['0']['token']);
-
         if ($response["success"] == "false") {
+            $softbrick->update([
+                'password' => null
+            ]);
             return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:error', $response['message']);
+        } else if ($response["success"] == "true") {
+            $token = $response['data']['0']['token'];
+            $softbrick->update([
+                'token' => $token
+            ]);
         }
 
-//        dd($response);
-        return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:success', '');
+        return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:success', 'Je gegevens zijn opgeslagen en getest. Je kan nu abonneren op je agenda.');
     }
 
 }

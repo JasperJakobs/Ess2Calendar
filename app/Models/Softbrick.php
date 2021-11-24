@@ -24,5 +24,6 @@ class Softbrick extends Model
         'user',
         'email',
         'password',
+        'token',
     ];
 }

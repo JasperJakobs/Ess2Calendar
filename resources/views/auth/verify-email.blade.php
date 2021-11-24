@@ -7,7 +7,9 @@
         </x-slot>
 
         <div class="mb-4 text-sm text-gray-600">
-            {{ __('Bedankt voor het registreren! Voordat je verder mag moet je je email verifiëren. Er is een verificatie link naar je inbox gestuurd. Niks ontvangen? Klik hieronder om er nog een te sturen.') }}
+            <p>{{ __('Bedankt voor het registreren! Voordat je verder mag moet je je email verifiëren. Er is een verificatie link naar je inbox gestuurd. Niks ontvangen? Klik hieronder om er nog een te sturen.') }}
+                <br><b>LET OP: Controleer ook je spam!</b>
+            </p>
         </div>
 
         @if (session('status') == 'verification-link-sent')
