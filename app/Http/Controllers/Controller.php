@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\updateCalendar;
 use App\Models\Softbrick;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -39,60 +40,6 @@ class Controller extends BaseController
         $softbrick = Softbrick::where('user', Auth::id())->first();
 
         return view('settings', ['softbrick' => $softbrick]);
-    }
-
-    /**
-     * Handle an incoming registration request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     *
-     */
-    public function updateSoftbrick(Request $request) {
-        $request->validate([
-            'email' => ['required', 'string', 'email', 'max:255'],
-            'password' => ['required', 'string', 'max:255'],
-        ]);
-
-        $softbrick = Softbrick::where('user', '=', Auth::id())->first();
-
-        if (!Softbrick::where('user', '=', Auth::id())->exists()) {
-             $softbrick = Softbrick::create([
-                'user' => Auth::id(),
-                'email' => $request->get('email'),
-                'password' => $request->get('password')
-            ]);
-        } else {
-            $softbrick->update([
-                'email' => $request->get('email'),
-                'password' => $request->get('password')
-            ]);
-        }
-
-        if ($softbrick->password == null) return redirect(RouteServiceProvider::SETTINGS);
-
-        $response = Http::acceptJson()->withHeaders([
-            'content-type' => 'application/json'
-        ])->post('https://bcc.softbrick.com:3000/logon?version=4', [
-            'user' => $softbrick->email,
-            'password' => $softbrick->password,
-            'device' => '',
-            'language' => 'nl',
-        ])->throw()->json();
-
-        if ($response["success"] == "false") {
-            $softbrick->update([
-                'password' => null
-            ]);
-            return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:error', $response['message']);
-        } else if ($response["success"] == "true") {
-            $token = $response['data']['0']['token'];
-            $softbrick->update([
-                'token' => $token
-            ]);
-        }
-
-        return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:success', 'Je gegevens zijn opgeslagen en getest. Je kan nu abonneren op je agenda.');
     }
 
 }

@@ -19,6 +19,7 @@ class CreateSoftbricksTable extends Migration
             $table->string('email')->nullable();
             $table->string('password')->nullable();
             $table->string('token')->nullable();
+            $table->string('badnum')->nullable();
         });
     }
 

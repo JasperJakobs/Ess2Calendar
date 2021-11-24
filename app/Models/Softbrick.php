@@ -25,5 +25,6 @@ class Softbrick extends Model
         'email',
         'password',
         'token',
+        'badnum'
     ];
 }

@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
@@ -25,6 +27,14 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        VerifyEmail::toMailUsing(function ($notifiable, $url) {
+            return (new MailMessage)
+                ->subject('Verifiër je email adres')
+                ->greeting('Hallo!')
+                ->line('Klik op onderstaande knop om je email te verifiëren.')
+                ->action('Verifïeer email adres', $url)
+                ->line('Als je geen account hebt aangemaakt zijn er geen verdere acties vereist.')
+                ->salutation("Groet,  \r\n ESS2CALENDAR");
+        });
     }
 }

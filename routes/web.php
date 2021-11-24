@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\SoftbrickController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,8 @@ Route::get('/', [Controller::class, 'home'])->middleware(['auth', 'verified'])->
 
 Route::get('/settings', [Controller::class, 'settings'])->middleware(['auth', 'verified'])->name('settings');
 
-Route::post('/settings/softbrick', [Controller::class, 'updateSoftbrick'])->middleware(['auth', 'verified'])->name("post:softbrick");
+Route::post('/settings/softbrick', [SoftbrickController::class, 'updateSoftbrick'])->middleware(['auth', 'verified'])->name("post:softbrick");
+
+//Route::get('/cal/{id}', Controller::class, 'getCalendar');
 
 require __DIR__.'/auth.php';
