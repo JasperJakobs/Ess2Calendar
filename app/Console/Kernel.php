@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('calendars:update')->twiceDaily(00, 12)->runInBackground();
+        $schedule->command('calendars:truncate')->twiceDaily(00, 12)->runInBackground();
     }
 
     /**

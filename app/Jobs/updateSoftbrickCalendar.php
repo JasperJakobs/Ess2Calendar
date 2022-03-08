@@ -3,9 +3,11 @@
 namespace App\Jobs;
 
 use App\Http\Controllers\SoftbrickController;
+use App\Models\Rooster;
 use App\Models\Softbrick;
 use DateTime;
 use DateTimeZone;
+use http\Client\Curl\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -44,6 +46,10 @@ class updateSoftbrickCalendar implements ShouldQueue
     {
         if ($this->softbrick->token == null) return;
 
+        Rooster::where('user', $this->softbrick->user)->each(function ($entry) {
+           $entry->delete();
+        });
+
         try {
             $response = Http::acceptJson()->withHeaders([
                 'content-type' => 'application/json'
@@ -76,12 +82,21 @@ class updateSoftbrickCalendar implements ShouldQueue
                             $address = $locations[0];
                         }
 
-                        $calendar->event(\Spatie\IcalendarGenerator\Components\Event::create()
-                            ->name('Werken')
-                            ->description('Beheerd door e2c.jasperjakobs.nl')
-                            ->address($address)
-                            ->startsAt(new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam')))
-                            ->endsAt(new \DateTime($item['datum'] . $item['tot'], new DateTimeZone('Europe/Amsterdam'))));
+//                        $calendar->event(\Spatie\IcalendarGenerator\Components\Event::create()
+//                            ->name('Werken')
+//                            ->description('Beheerd door e2c.jasperjakobs.nl')
+//                            ->address($address)
+//                            ->startsAt(new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam')))
+//                            ->endsAt(new \DateTime($item['datum'] . $item['tot'], new DateTimeZone('Europe/Amsterdam'))));
+
+                        $roosterEntry = Rooster::create([
+                            'user' => $this->softbrick->user,
+                            'day' => new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam')),
+                            'from' => new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam')),
+                            'until' => new DateTime($item['datum'] . $item['tot'], new DateTimeZone('Europe/Amsterdam')),
+                            'location' => $address
+                        ]);
+
                     }
                 }
 

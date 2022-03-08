@@ -21,6 +21,6 @@ Route::get('/settings', [Controller::class, 'settings'])->middleware(['auth', 'v
 
 Route::post('/settings/softbrick', [SoftbrickController::class, 'updateSoftbrick'])->middleware(['auth', 'verified'])->name("post:softbrick");
 
-//Route::get('/cal/{id}', Controller::class, 'getCalendar');
+Route::get('/cal/{uuid}', [Controller::class, 'calendar']);
 
 require __DIR__.'/auth.php';

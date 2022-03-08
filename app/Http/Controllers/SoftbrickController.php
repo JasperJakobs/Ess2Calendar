@@ -49,9 +49,15 @@ class SoftbrickController extends Controller
 
         $alert = explode(':', $authSuccess);
 
-        if ($alert[0] == 'success') updateSoftbrickCalendar::dispatchSync($softbrick);
-
-        return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:' . $alert[0], $alert[1]);
+        switch ($alert[0]) {
+            case 'success':
+                updateSoftbrickCalendar::dispatchSync($softbrick);
+                return redirect(RouteServiceProvider::HOME)->with('softbrick:' . $alert[0], $alert[1]);
+                break;
+            case 'error':
+                return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:' . $alert[0], $alert[1]);
+                break;
+        }
     }
 
     /**
@@ -61,7 +67,7 @@ class SoftbrickController extends Controller
      * @return string
      *
      */
-    public function authSoftbrick(Softbrick $softbrick) {
+    public function authSoftbrick(Softbrick $softbrick, $notify = true) {
         if ($softbrick->password == null) return "error:Er is geen wachtwoord aanwezig.";
 
         $response = Http::acceptJson()->withHeaders([
@@ -78,7 +84,7 @@ class SoftbrickController extends Controller
                 'password' => null
             ]);
             $user = Auth::user();
-            $user->notify(new softbrickError());
+            if ($notify) $user->notify(new softbrickError());
 
             return "error:" . $response['message'];
         } else if ($response["success"] == "true") {
@@ -90,6 +96,6 @@ class SoftbrickController extends Controller
             ]);
         }
 
-        return "success:Gebruiker is succesvol geauthoriseerd.";
+        return "success:Softbrick is succesvol gekoppeld!";
     }
 }
