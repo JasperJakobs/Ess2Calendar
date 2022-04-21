@@ -33,7 +33,8 @@
             </main>
 
             <footer class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
-                <p>&copy; {{ now()->year }} <a href="https://jasperjakobs.nl">jasperjakobs.nl</a> - Alle rechten voorbehouden.</p>
+                <a href="https://jasperjakobs.nl" target="_blank">@include('components.footer_logo')</a>
+                <p>&copy; 2021-{{ now()->year }} / v1.1.0</p>
             </footer>
         </div>
     </body>

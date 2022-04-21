@@ -41,10 +41,22 @@ class UpdateCalendars extends Command
      */
     public function handle()
     {
-        $softbricks = $this->withProgressBar(Softbrick::all(), function ($softbrick) {
-            $this->line(" Updating " . $softbrick->email);
-            updateSoftbrickCalendar::dispatch($softbrick);
-        });
+        $accounts = Softbrick::all();
+        $bar = $this->output->createProgressBar(count($accounts));
+        $bar->setFormat(sprintf('%s <info>%%status%%</info>',
+            $bar->getFormatDefinition('verbose')));
+
+        $bar->setMessage(" ", 'status');
+        $bar->start();
+
+        foreach ($accounts as $account) {
+            $bar->setMessage("Updating " . $account->email, 'status');
+            updateSoftbrickCalendar::dispatch($account);
+            $bar->advance();
+        }
+
+        $bar->setMessage("Finished", 'status');
+        $bar->finish();
 
         return Command::SUCCESS;
     }

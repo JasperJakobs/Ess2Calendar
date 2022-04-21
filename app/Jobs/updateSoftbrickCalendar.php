@@ -47,10 +47,6 @@ class updateSoftbrickCalendar implements ShouldQueue
     {
         if ($this->softbrick->token == null) return;
 
-//        Rooster::where('user', $this->softbrick->user)->each(function ($entry) {
-//           $entry->delete();
-//        });
-
         try {
             $response = Http::acceptJson()->withHeaders([
                 'content-type' => 'application/json'
@@ -100,13 +96,15 @@ class updateSoftbrickCalendar implements ShouldQueue
                             ]);
                         } else {
                             if (new DateTime($existingEntry->day . $existingEntry->from, new DateTimeZone('Europe/Amsterdam')) > $from) {
-                                $existingEntry->from = $from;
-                                $existingEntry->save();
+                                Rooster::where('user', $this->softbrick->user)->where('day', $day->format('Y-m-d'))->update([
+                                    'from' => $from,
+                                ]);
                             }
 
                             if (new DateTime($existingEntry->day . $existingEntry->until, new DateTimeZone('Europe/Amsterdam')) < $until) {
-                                $existingEntry->until = $until;
-                                $existingEntry->save();
+                                Rooster::where('user', $this->softbrick->user)->where('day', $day->format('Y-m-d'))->update([
+                                    'until' => $until,
+                                ]);
                             }
                         }
 
