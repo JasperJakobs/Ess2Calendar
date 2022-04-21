@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Spatie\IcalendarGenerator\Components\Calendar;
+use Spatie\IcalendarGenerator\Components\Event;
 use Spatie\IcalendarGenerator\Enums\ParticipationStatus;
 use Spatie\IcalendarGenerator\Enums\RecurrenceFrequency;
 use Spatie\IcalendarGenerator\ValueObjects\RRule;
@@ -79,10 +80,19 @@ class Controller extends BaseController
             ->name('Softbrick van ' . $softbrick->email)
             ->description('Softbrick werkrooster via https://e2c.jasperjakobs.nl/');
 
-        $entries = Rooster::where('user', $softbrick->user)->each(function ($entry) use ($calendar) {
-            $event = $calendar->event(\Spatie\IcalendarGenerator\Components\Event::create()
+        $entries = Rooster::where('user', $softbrick->user)->get();
+
+        if ($entries->isEmpty()) {
+            $calendar->event(Event::create()
+                ->name('FOUT BIJ SYNCHRONISATIE!')
+                ->rrule(RRule::frequency(RecurrenceFrequency::daily()))
+                ->address('Gegevens resetten: https://e2c.jasperjakobs.nl/')
+                ->description('Gegevens resetten: https://e2c.jasperjakobs.nl/')
+                ->startsAt(new DateTime(Carbon::now()->toDateString() . '09:00:00', new DateTimeZone('Europe/Amsterdam')))
+                ->endsAt(new \DateTime(Carbon::now()->toDateString() . '18:00:00', new DateTimeZone('Europe/Amsterdam'))));
+        } else $entries->each(function ($entry) use ($calendar) {
+            $calendar->event(Event::create()
                 ->name('Werken')
-                ->transparent()
                 ->description('Beheerd door https://e2c.jasperjakobs.nl/')
                 ->address($entry->location)
                 ->attendee('jasperjakobs@e2c.jasperjakobs.nl', 'Jasper Jakobs', ParticipationStatus::accepted())

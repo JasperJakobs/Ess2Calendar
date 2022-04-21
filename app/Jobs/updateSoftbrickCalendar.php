@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Console\Commands\UpdateCalendars;
 use App\Http\Controllers\SoftbrickController;
 use App\Models\Rooster;
 use App\Models\Softbrick;
@@ -46,9 +47,9 @@ class updateSoftbrickCalendar implements ShouldQueue
     {
         if ($this->softbrick->token == null) return;
 
-        Rooster::where('user', $this->softbrick->user)->each(function ($entry) {
-           $entry->delete();
-        });
+//        Rooster::where('user', $this->softbrick->user)->each(function ($entry) {
+//           $entry->delete();
+//        });
 
         try {
             $response = Http::acceptJson()->withHeaders([
@@ -73,6 +74,7 @@ class updateSoftbrickCalendar implements ShouldQueue
                 $data = $response['data'];
 
                 foreach ($data as $item) {
+                    $existingEntry = null;
                     if ($item['naam'] == 'plan') {
 
                         $address = "0036: Arnhem";
@@ -82,20 +84,31 @@ class updateSoftbrickCalendar implements ShouldQueue
                             $address = $locations[0];
                         }
 
-//                        $calendar->event(\Spatie\IcalendarGenerator\Components\Event::create()
-//                            ->name('Werken')
-//                            ->description('Beheerd door e2c.jasperjakobs.nl')
-//                            ->address($address)
-//                            ->startsAt(new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam')))
-//                            ->endsAt(new \DateTime($item['datum'] . $item['tot'], new DateTimeZone('Europe/Amsterdam'))));
+                        $day = new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam'));
+                        $from = new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam'));
+                        $until = new DateTime($item['datum'] . $item['tot'], new DateTimeZone('Europe/Amsterdam'));
 
-                        $roosterEntry = Rooster::create([
-                            'user' => $this->softbrick->user,
-                            'day' => new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam')),
-                            'from' => new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam')),
-                            'until' => new DateTime($item['datum'] . $item['tot'], new DateTimeZone('Europe/Amsterdam')),
-                            'location' => $address
-                        ]);
+                        $existingEntry = Rooster::where('user', $this->softbrick->user)->where('day', $day->format('Y-m-d'))->first();
+
+                        if (!$existingEntry) {
+                            Rooster::create([
+                                'user' => $this->softbrick->user,
+                                'day' => $day,
+                                'from' => $from,
+                                'until' => $until,
+                                'location' => $address
+                            ]);
+                        } else {
+                            if (new DateTime($existingEntry->day . $existingEntry->from, new DateTimeZone('Europe/Amsterdam')) > $from) {
+                                $existingEntry->from = $from;
+                                $existingEntry->save();
+                            }
+
+                            if (new DateTime($existingEntry->day . $existingEntry->until, new DateTimeZone('Europe/Amsterdam')) < $until) {
+                                $existingEntry->until = $until;
+                                $existingEntry->save();
+                            }
+                        }
 
                     }
                 }

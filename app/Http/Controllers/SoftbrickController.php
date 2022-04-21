@@ -10,6 +10,7 @@ use App\Providers\RouteServiceProvider;
 use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use PhpParser\Node\Scalar\String_;
@@ -35,13 +36,13 @@ class SoftbrickController extends Controller
             $softbrick = Softbrick::create([
                 'user' => Auth::id(),
                 'email' => $request->get('email'),
-                'password' => $request->get('password'),
+                'password' => Crypt::encryptString($request->get('password')),
                 'uuid' => Str::uuid()
             ]);
         } else {
             $softbrick->update([
                 'email' => $request->get('email'),
-                'password' => $request->get('password')
+                'password' => Crypt::encryptString($request->get('password'))
             ]);
         }
 
@@ -53,11 +54,10 @@ class SoftbrickController extends Controller
             case 'success':
                 updateSoftbrickCalendar::dispatchSync($softbrick);
                 return redirect(RouteServiceProvider::HOME)->with('softbrick:' . $alert[0], $alert[1]);
-                break;
             case 'error':
                 return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:' . $alert[0], $alert[1]);
-                break;
         }
+        return redirect(RouteServiceProvider::SETTINGS)->with('softbrick:error', 'Something went wrong');
     }
 
     /**
@@ -74,7 +74,7 @@ class SoftbrickController extends Controller
             'content-type' => 'application/json'
         ])->post('https://bcc.softbrick.com:3000/logon?version=4', [
             'user' => $softbrick->email,
-            'password' => $softbrick->password,
+            'password' => Crypt::decryptString($softbrick->password),
             'device' => '',
             'language' => 'nl',
         ])->throw()->json();

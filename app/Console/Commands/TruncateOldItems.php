@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\updateSoftbrickCalendar;
 use App\Models\Rooster;
+use App\Models\Softbrick;
 use Illuminate\Console\Command;
 
 class TruncateOldItems extends Command
@@ -38,11 +40,11 @@ class TruncateOldItems extends Command
      */
     public function handle()
     {
-        Rooster::where('day', '<', now()->subWeeks(5)->startOfWeek()->format('Ymd'))->each(function ($entry) {
-           $entry->delete();
+        $entries = $this->withProgressBar(Rooster::where('day', '<', now()->subWeeks(5)->startOfWeek()->format('Ymd'))->get(), function ($entry) {;
+            $entry->delete();
         });
 
-        $this->info("Removed old calendar entries!");
+        $this->info(" Removed old calendar entries!");
         return Command::SUCCESS;
     }
 }
