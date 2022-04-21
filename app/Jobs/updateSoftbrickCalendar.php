@@ -54,7 +54,7 @@ class updateSoftbrickCalendar implements ShouldQueue
                 'badnum' => $this->softbrick->badnum,
                 'user' => $this->softbrick->email,
                 'token' => $this->softbrick->token,
-                'datumvanaf' =>now()->subWeeks(5)->startOfWeek()->format('Ymd'),
+                'datumvanaf' => now()->subWeeks(5)->startOfWeek()->format('Ymd'),
                 'datumtm' => now()->addWeeks(5)->endOfWeek()->format('Ymd'),
                 'language' => 'nl',
             ])->throw()->json();

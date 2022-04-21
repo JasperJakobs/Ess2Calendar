@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\updateSoftbrickCalendar;
+use App\Models\Attendee;
 use App\Models\Rooster;
 use App\Models\Softbrick;
 use DateTime;
@@ -87,18 +88,34 @@ class Controller extends BaseController
                 ->name('FOUT BIJ SYNCHRONISATIE!')
                 ->rrule(RRule::frequency(RecurrenceFrequency::daily()))
                 ->address('Gegevens resetten: https://e2c.jasperjakobs.nl/')
-                ->description('Gegevens resetten: https://e2c.jasperjakobs.nl/')
+                ->description('Gegevens resetten: https://e2c.jasperjakobs.nl/ \n Deze agenda items worden na een succesvolle authorisatie verwijderd.')
                 ->startsAt(new DateTime(Carbon::now()->toDateString() . '09:00:00', new DateTimeZone('Europe/Amsterdam')))
                 ->endsAt(new \DateTime(Carbon::now()->toDateString() . '18:00:00', new DateTimeZone('Europe/Amsterdam'))));
         } else $entries->each(function ($entry) use ($calendar) {
-            $calendar->event(Event::create()
+            $calendar->event($event = Event::create()
                 ->name('Werken')
                 ->description('Beheerd door https://e2c.jasperjakobs.nl/')
                 ->address($entry->location)
-                ->attendee('jasperjakobs@e2c.jasperjakobs.nl', 'Jasper Jakobs', ParticipationStatus::accepted())
-                ->attendee('kerlijnvogel@e2c.jasperjakobs.nl', 'Kerlijn Vogel', ParticipationStatus::declined())
                 ->startsAt(new DateTime($entry->day . $entry->from, new DateTimeZone('Europe/Amsterdam')))
                 ->endsAt(new \DateTime($entry->day . $entry->until, new DateTimeZone('Europe/Amsterdam'))));
+
+            $attendees = Attendee::where('day', $entry->day)->get();
+            if ($attendees->isEmpty()) {
+                $event->attendee('unavailable@e2c.jasperjakobs.nl', 'Niet Beschikbaar', ParticipationStatus::tentative());
+            }
+            foreach ($attendees as $attendee) {
+                switch ($attendee->status) {
+                    case 'present':
+                        $event->attendee($attendee->firstname  . $attendee->lastname . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::accepted());
+                        break;
+                    case 'absent':
+                        $event->attendee($attendee->firstname . $attendee->lastname . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::declined());
+                        break;
+                    case 'unknown':
+                        $event->attendee($attendee->firstname . $attendee->lastname . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::tentative());
+                        break;
+                }
+            }
         });
 
         return response($calendar->get())
