@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -46,7 +47,7 @@ class updateSoftbrickCalendar implements ShouldQueue
             $response = Http::acceptJson()->withHeaders([
                 'content-type' => 'application/json'
             ])->post('https://bcc.softbrick.com:3000/weekrooster?version=4', [
-                'badnum' => $this->softbrick->badnum,
+                'badnum' => Crypt::decryptString($this->softbrick->badnum),
                 'user' => $this->softbrick->email,
                 'token' => $this->softbrick->token,
                 'datumvanaf' => now()->subWeeks(5)->startOfWeek()->format('Ymd'),

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\updateAttendeesJob;
 use App\Models\Attendee;
 use Illuminate\Console\Command;
 
@@ -45,7 +46,7 @@ class UpdateAttendees extends Command
 
         for ($i = -30; $i < 35; $i++) {
             $bar->advance();
-            updateAttendees::dispatch($i);
+            updateAttendeesJob::dispatch($i);
         }
 
         $bar->finish();

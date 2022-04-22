@@ -11,10 +11,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class updateAttendees implements ShouldQueue
+class updateAttendeesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -46,13 +47,12 @@ class updateAttendees implements ShouldQueue
             $response = Http::acceptJson()->withHeaders([
                 'content-type' => 'application/json'
             ])->post('https://bcc.softbrick.com:3000/mijnteams?version=4', [
-                'badnum'    => $credentials->badnum,
+                'badnum'    => Crypt::decryptString($credentials->badnum),
                 'token'     => $credentials->token,
                 'language'  => 'nl',
                 'datum'     => $this->day,
             ])->throw()->json();
 
-            // TODO: Encrypt token and badnum
             if ($response == null) return;
 
             $team = $response['team'][0]['collegas'];

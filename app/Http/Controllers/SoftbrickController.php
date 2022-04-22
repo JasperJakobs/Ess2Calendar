@@ -92,7 +92,7 @@ class SoftbrickController extends Controller
             $badnum = $response['data']['0']['badnum'];
             $softbrick->update([
                 'token' => $token,
-                'badnum' => $badnum
+                'badnum' => Crypt::encryptString($badnum)
             ]);
         }
 
