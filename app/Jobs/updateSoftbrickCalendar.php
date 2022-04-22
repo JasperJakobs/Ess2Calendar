@@ -2,16 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Console\Commands\UpdateCalendars;
 use App\Http\Controllers\SoftbrickController;
 use App\Models\Rooster;
 use App\Models\Softbrick;
 use DateTime;
 use DateTimeZone;
-use http\Client\Curl\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Console\Scheduling\Event;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -19,7 +15,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Spatie\IcalendarGenerator\Components\Calendar;
 
 class updateSoftbrickCalendar implements ShouldQueue

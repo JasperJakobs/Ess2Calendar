@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('calendars:update')->twiceDaily(00, 12)->runInBackground();
+        $schedule->command('attendees:update')->twiceDaily(00, 12)->runInBackground();
     }
 
     /**
@@ -36,6 +37,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+
         $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
