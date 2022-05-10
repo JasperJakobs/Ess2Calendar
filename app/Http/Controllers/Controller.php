@@ -104,15 +104,17 @@ class Controller extends BaseController
                 $event->attendee('unavailable@e2c.jasperjakobs.nl', 'Niet Beschikbaar', ParticipationStatus::tentative());
             }
             foreach ($attendees as $attendee) {
+                $name = str_replace(' ', '', $attendee->firstname  . $attendee->lastname);
+                $name = preg_replace('/[^A-Za-z0-9\-]/', '', $name);
                 switch ($attendee->status) {
                     case 'present':
-                        $event->attendee($attendee->firstname  . $attendee->lastname . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::accepted());
+                        $event->attendee($name . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::accepted());
                         break;
                     case 'absent':
-                        $event->attendee($attendee->firstname . $attendee->lastname . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::declined());
+                        $event->attendee($name . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::declined());
                         break;
                     case 'unknown':
-                        $event->attendee($attendee->firstname . $attendee->lastname . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::tentative());
+                        $event->attendee($name . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::tentative());
                         break;
                 }
             }
