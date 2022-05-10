@@ -107,8 +107,9 @@ class Controller extends BaseController
                 $name = str_replace(' ', '', $attendee->firstname  . $attendee->lastname);
                 $name = preg_replace('/[^A-Za-z0-9\-]/', '', $name);
 
-                $visibleName = preg_replace('/\s+/', ' ', $attendee->firstname . ' ' . $attendee->lastname);
-                $visibleName = explode('-', $visibleName);
+                $lastname = explode('-', $attendee->lastname);
+                $visibleName = preg_replace('/\s+/', ' ', $attendee->firstname . ' ' . $lastname[0]);
+
                 switch ($attendee->status) {
                     case 'present':
                         $event->attendee($name . '@e2c.jasperjakobs.nl', $visibleName, ParticipationStatus::accepted());
