@@ -42,6 +42,10 @@ class UpdateAttendees extends Command
         Attendee::truncate();
 
         $bar = $this->output->createProgressBar(65);
+        $bar->setFormat(sprintf('%s <info>%%status%%</info>',
+            $bar->getFormatDefinition('verbose')));
+
+        $bar->setMessage("Running...", 'status');
         $bar->start();
 
         for ($i = -30; $i < 35; $i++) {
@@ -49,8 +53,9 @@ class UpdateAttendees extends Command
             updateAttendeesJob::dispatch($i);
         }
 
+        $bar->setMessage("Finished", 'status');
         $bar->finish();
-        $this->info('Attendees updated.\n');
+        $this->info("\n");
 
         return Command::SUCCESS;
     }

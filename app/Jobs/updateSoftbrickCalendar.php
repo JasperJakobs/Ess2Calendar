@@ -76,6 +76,10 @@ class updateSoftbrickCalendar implements ShouldQueue
                             $address = $locations[0];
                         }
 
+                        if ($address == "Vakantie") {
+                            continue;
+                        }
+
                         $day = new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam'));
                         $from = new DateTime($item['datum'] . $item['van'], new DateTimeZone('Europe/Amsterdam'));
                         $until = new DateTime($item['datum'] . $item['tot'], new DateTimeZone('Europe/Amsterdam'));
