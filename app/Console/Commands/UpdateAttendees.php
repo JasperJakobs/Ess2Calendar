@@ -50,6 +50,7 @@ class UpdateAttendees extends Command
         }
 
         $bar->finish();
+        $this->info('Attendees updated.\n');
 
         return Command::SUCCESS;
     }

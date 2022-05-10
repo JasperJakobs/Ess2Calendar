@@ -55,6 +55,7 @@ class UpdateCalendars extends Command
 
         $bar->setMessage("Finished", 'status');
         $bar->finish();
+        $this->info("\n");
 
         return Command::SUCCESS;
     }
