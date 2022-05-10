@@ -106,15 +106,16 @@ class Controller extends BaseController
             foreach ($attendees as $attendee) {
                 $name = str_replace(' ', '', $attendee->firstname  . $attendee->lastname);
                 $name = preg_replace('/[^A-Za-z0-9\-]/', '', $name);
+                $visibleName = preg_replace('/\s+/', ' ', $attendee->firstname . ' ' . $attendee->lastname);
                 switch ($attendee->status) {
                     case 'present':
-                        $event->attendee($name . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::accepted());
+                        $event->attendee($name . '@e2c.jasperjakobs.nl', $visibleName, ParticipationStatus::accepted());
                         break;
                     case 'absent':
-                        $event->attendee($name . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::declined());
+                        $event->attendee($name . '@e2c.jasperjakobs.nl', $visibleName, ParticipationStatus::declined());
                         break;
                     case 'unknown':
-                        $event->attendee($name . '@e2c.jasperjakobs.nl', $attendee->firstname . ' ' . $attendee->lastname, ParticipationStatus::tentative());
+                        $event->attendee($name . '@e2c.jasperjakobs.nl', $visibleName, ParticipationStatus::tentative());
                         break;
                 }
             }
