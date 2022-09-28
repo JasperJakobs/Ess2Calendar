@@ -83,7 +83,7 @@ class SoftbrickController extends Controller
             $softbrick->update([
                 'password' => null
             ]);
-            $user = $softbrick->parent();
+            $user = $softbrick->parent;
             if ($notify) $user->notify(new softbrickError());
 
             return "error:" . $response['message'];
